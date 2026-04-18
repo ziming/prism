@@ -80,6 +80,24 @@ it('returns structured output', function (): void {
 
     expect($response->usage->promptTokens)->toBe(81);
     expect($response->usage->completionTokens)->toBe(64);
+
+    Http::assertSent(function (Request $request): bool {
+        $schema = $request->data()['generationConfig']['response_schema'];
+
+        expect($schema['properties']['weather']['type'])->toBe(['string', 'null']);
+        expect($schema['properties']['coat_required']['type'])->toBe(['boolean', 'null']);
+        expect($schema['properties']['game_time']['type'])->toBe(['string', 'null']);
+        expect($schema['properties']['temperature']['type'])->toBe(['number', 'null']);
+        expect($schema['properties']['location']['type'])->toBe(['object', 'null']);
+        expect($schema['properties']['players']['type'])->toBe(['array', 'null']);
+        expect($schema['properties']['players']['items']['type'])->toBe(['string', 'null']);
+
+        expect($schema['properties']['weather'])->not->toHaveKey('nullable');
+        expect($schema['properties']['location'])->not->toHaveKey('nullable');
+        expect($schema['properties']['players']['items'])->not->toHaveKey('nullable');
+
+        return true;
+    });
 });
 
 it('can use a cache object with a structured request', function (): void {

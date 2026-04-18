@@ -54,7 +54,7 @@ class SchemaMap
         return array_merge(
             array_filter([
                 ...$schemaArray,
-                'type' => $this->mapType(),
+                'type' => $schemaArray['type'] ?? $this->mapType(),
             ]),
             array_filter([
                 'items' => property_exists($this->schema, 'items') && $this->schema->items
@@ -67,9 +67,6 @@ class SchemaMap
 
                         return $carry;
                     }, [])
-                    : null,
-                'nullable' => property_exists($this->schema, 'nullable') && $this->schema->nullable
-                    ? true
                     : null,
             ])
         );

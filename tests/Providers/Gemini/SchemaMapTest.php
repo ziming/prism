@@ -25,13 +25,11 @@ it('maps array schema correctly', function (): void {
 
     expect($map)->toBe([
         'description' => 'test array description',
-        'type' => 'array',
+        'type' => ['array', 'null'],
         'items' => [
             'description' => 'test string description',
-            'type' => 'string',
-            'nullable' => true,
+            'type' => ['string', 'null'],
         ],
-        'nullable' => true,
     ]);
 });
 
@@ -44,8 +42,7 @@ it('maps boolean schema correctly', function (): void {
 
     expect($map)->toBe([
         'description' => 'test description',
-        'type' => 'boolean',
-        'nullable' => true,
+        'type' => ['boolean', 'null'],
     ]);
 });
 
@@ -60,8 +57,7 @@ it('maps enum schema correctly', function (): void {
     expect($map)->toBe([
         'description' => 'test description',
         'enum' => ['option1', 'option2'],
-        'type' => 'string',
-        'nullable' => true,
+        'type' => ['string', 'null'],
     ]);
 });
 
@@ -74,8 +70,7 @@ it('maps number schema correctly', function (): void {
 
     expect($map)->toBe([
         'description' => 'test description',
-        'type' => 'number',
-        'nullable' => true,
+        'type' => ['number', 'null'],
     ]);
 });
 
@@ -88,8 +83,7 @@ it('maps string schema correctly', function (): void {
 
     expect($map)->toBe([
         'description' => 'test description',
-        'type' => 'string',
-        'nullable' => true,
+        'type' => ['string', 'null'],
     ]);
 });
 
@@ -110,7 +104,7 @@ it('maps object schema correctly', function (): void {
 
     expect($map)->toBe([
         'description' => 'test object description',
-        'type' => 'object',
+        'type' => ['object', 'null'],
         'properties' => [
             'testName' => [
                 'description' => 'test string description',
@@ -118,7 +112,21 @@ it('maps object schema correctly', function (): void {
             ],
         ],
         'required' => ['testName'],
-        'nullable' => true,
+    ]);
+});
+
+it('preserves all nullable enum types', function (): void {
+    $map = (new SchemaMap(new EnumSchema(
+        name: 'temperature',
+        description: 'temperature reading',
+        options: [98.6, 'unknown'],
+        nullable: true,
+    )))->toArray();
+
+    expect($map)->toBe([
+        'description' => 'temperature reading',
+        'enum' => [98.6, 'unknown'],
+        'type' => ['number', 'string', 'null'],
     ]);
 });
 
